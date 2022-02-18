@@ -1,0 +1,21 @@
+---
+- name: Getting all instance IDs
+  ec2_instance_facts:
+    region: "{{region}}"
+  register: ec2_info
+
+- name: Printing all instance IDs
+  debug: 
+    msg: "{{ item.instance_id }}" 
+  with_items: "{{ ec2_info.instances }}"
+
+
+- name: Terminate 
+  with_items: "{{ec2_info.instances}}"
+  ec2:
+    instance_ids: '{{ item.instance_id }}'
+    region: "{{region}}"
+    state: 'absent'
+    wait: yes
+  
+    
